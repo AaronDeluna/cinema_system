@@ -1,7 +1,7 @@
 CREATE TABLE place
 (
     id   SERIAL PRIMARY KEY,
-    name varchar(50)
+    seat_number varchar(50)
 );
 
 CREATE TABLE ticket
