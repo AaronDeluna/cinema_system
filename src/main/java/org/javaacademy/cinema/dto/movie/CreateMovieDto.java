@@ -1,4 +1,4 @@
-package org.javaacademy.cinema.dto;
+package org.javaacademy.cinema.dto.movie;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

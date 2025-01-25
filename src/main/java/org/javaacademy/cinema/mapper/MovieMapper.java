@@ -1,7 +1,7 @@
 package org.javaacademy.cinema.mapper;
 
-import org.javaacademy.cinema.dto.CreateMovieDto;
-import org.javaacademy.cinema.dto.MovieDto;
+import org.javaacademy.cinema.dto.movie.CreateMovieDto;
+import org.javaacademy.cinema.dto.movie.MovieDto;
 import org.javaacademy.cinema.entity.Movie;
 import org.springframework.stereotype.Component;
 

@@ -1,8 +1,8 @@
 package org.javaacademy.cinema.service;
 
 import lombok.RequiredArgsConstructor;
-import org.javaacademy.cinema.dto.CreateMovieDto;
-import org.javaacademy.cinema.dto.MovieDto;
+import org.javaacademy.cinema.dto.movie.CreateMovieDto;
+import org.javaacademy.cinema.dto.movie.MovieDto;
 import org.javaacademy.cinema.entity.Movie;
 import org.javaacademy.cinema.mapper.MovieMapper;
 import org.javaacademy.cinema.repository.MovieRepository;
