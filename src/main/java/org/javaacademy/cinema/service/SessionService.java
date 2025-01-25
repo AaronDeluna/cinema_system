@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.javaacademy.cinema.dto.session.CreateSessionDto;
 import org.javaacademy.cinema.dto.session.SessionDto;
 import org.javaacademy.cinema.entity.Movie;
-import org.javaacademy.cinema.entity.Session;
 import org.javaacademy.cinema.exception.NotFoundException;
 import org.javaacademy.cinema.mapper.SessionMapper;
 import org.javaacademy.cinema.repository.MovieRepository;
@@ -27,15 +26,23 @@ public class SessionService {
                 .orElseThrow(
                         () -> new NotFoundException(ID_NOT_FOUND_MESSAGE.formatted(createSessionDto.getMovieId()))
                 );
-        SessionDto sessionDto = SessionDto.builder()
+        SessionDto sessionDto = buildSessionDto(createSessionDto, movie);
+        SessionDto responseSession = saveSession(sessionDto);
+        ticketService.create(responseSession);
+        return responseSession;
+    }
+
+    private SessionDto buildSessionDto(CreateSessionDto createSessionDto, Movie movie) {
+        return SessionDto.builder()
                 .movie(movie)
                 .datetime(createSessionDto.getDatetime())
                 .price(createSessionDto.getPrice())
                 .build();
-        SessionDto responceSession = sessionMapper.toDto(
+    }
+
+    private SessionDto saveSession(SessionDto sessionDto) {
+        return sessionMapper.toDto(
                 sessionRepository.save(sessionMapper.toEntity(sessionDto)).orElseThrow()
         );
-        ticketService.create(responceSession);
-        return responceSession;
     }
 }
