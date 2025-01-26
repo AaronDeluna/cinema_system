@@ -9,5 +9,7 @@ spring:
     driver-class-name: org.postgresql.Driver
 
 cinema:
-  place:
-    max-count: 300
+  places:
+    startRow: A
+    endRow: C
+    maxSeatsPerRow: 3
