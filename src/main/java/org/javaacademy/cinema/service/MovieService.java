@@ -3,10 +3,13 @@ package org.javaacademy.cinema.service;
 import lombok.RequiredArgsConstructor;
 import org.javaacademy.cinema.dto.movie.CreateMovieDto;
 import org.javaacademy.cinema.dto.movie.MovieDto;
+import org.javaacademy.cinema.dto.movie.ResponseMovieDto;
 import org.javaacademy.cinema.entity.Movie;
 import org.javaacademy.cinema.mapper.MovieMapper;
 import org.javaacademy.cinema.repository.MovieRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -17,5 +20,9 @@ public class MovieService {
     public MovieDto create(CreateMovieDto createMovieDto) {
         Movie movie = movieRepository.save(movieMapper.toEntity(createMovieDto)).orElseThrow();
         return movieMapper.toDto(movie);
+    }
+
+    public List<ResponseMovieDto> findAll() {
+        return movieMapper.toDtos(movieRepository.findAll().orElseThrow());
     }
 }

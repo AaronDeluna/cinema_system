@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class TokenFilter implements Filter {
-    private static final String ADMIN_TOKEN = "secretadmin123";
+    private static final String USER_TOKEN = "secretadmin123";
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
@@ -21,7 +21,7 @@ public class TokenFilter implements Filter {
 
         String token = httpRequest.getHeader("user-token");
 
-        if (token == null || !ADMIN_TOKEN.equals(token)) {
+        if (token == null || !USER_TOKEN.equals(token)) {
             httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
             httpResponse.getWriter().write("Forbidden: Invalid or missing user-token");
             return;

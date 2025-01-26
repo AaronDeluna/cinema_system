@@ -16,14 +16,13 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class TicketService {
-    private static final boolean PAID_STATUS = true;
     private final TicketRepository ticketRepository;
     private final PlaceRepository placeRepository;
     private final SessionMapper sessionMapper;
     private final TicketMapper ticketMapper;
 
-    public List<TicketDto> findByPaidStatus() {
-        return ticketMapper.toDtos(ticketRepository.findTicketsByPaymentStatus(PAID_STATUS)
+    public List<TicketDto> findByPaidStatus(boolean isPaid) {
+        return ticketMapper.toDtos(ticketRepository.findTicketsByPaymentStatus(isPaid)
                 .orElseThrow());
     }
 

@@ -17,7 +17,7 @@ public class TicketController {
     private final TicketService ticketService;
 
     @GetMapping("/saled")
-    public ResponseEntity<List<TicketDto>> findPaidStatus() {
-        return ResponseEntity.ok().body(ticketService.findByPaidStatus());
+    public ResponseEntity<List<TicketDto>> findByPaidStatus() {
+        return ResponseEntity.ok().body(ticketService.findByPaidStatus(true));
     }
 }
