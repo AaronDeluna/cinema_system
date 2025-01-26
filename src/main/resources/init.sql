@@ -32,18 +32,12 @@ SELECT * from session;
 SELECT * from place;
 SELECT * from ticket;
 
+SELECT t.*, p.name
+FROM ticket t join place p on p.id = t.place_id
+WHERE t.session_id = 1;
+
 -- DELETE FROM session;
 -- DELETE FROM place;
 -- DELETE FROM ticket;
 
--- DROP table ticket;
--- DROP table movie;
--- DROP table session;
--- DROP table place;
 
-SELECT *
-from ticket join session s on s.id = ticket.session_id
-where s.id = 2;
-
-UPDATE ticket SET paid = true
-where id = 10

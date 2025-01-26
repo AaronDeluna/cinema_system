@@ -1,25 +1,21 @@
 package org.javaacademy.cinema.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.javaacademy.cinema.dto.session.CreateSessionDto;
 import org.javaacademy.cinema.dto.session.ResponseSessionDto;
 import org.javaacademy.cinema.dto.session.SessionDto;
 import org.javaacademy.cinema.dto.ticket.TicketDto;
 import org.javaacademy.cinema.entity.Movie;
-import org.javaacademy.cinema.entity.Ticket;
 import org.javaacademy.cinema.exception.NotFoundException;
 import org.javaacademy.cinema.mapper.SessionMapper;
 import org.javaacademy.cinema.repository.MovieRepository;
 import org.javaacademy.cinema.repository.SessionRepository;
-import org.javaacademy.cinema.repository.TicketRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class SessionService {
     private static final String ID_NOT_FOUND_MESSAGE = "Ошибка: id: '%s', не найден";
     private static final boolean NOT_PAID_STATUS = false;

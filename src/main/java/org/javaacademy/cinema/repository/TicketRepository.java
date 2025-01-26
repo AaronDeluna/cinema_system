@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.javaacademy.cinema.entity.Ticket;
 import org.javaacademy.cinema.exception.DataMappingException;
 import org.javaacademy.cinema.exception.NotFoundException;
+import org.javaacademy.cinema.exception.TicketAlreadyPurchasedException;
 import org.javaacademy.cinema.util.DbUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -22,6 +23,9 @@ import static java.util.Optional.empty;
 @RequiredArgsConstructor
 @Slf4j
 public class TicketRepository {
+    private static final String TICKET_ALREADY_PURCHASED_MESSAGE = """
+            Ошибка: билет id: '%s' уже оплачен
+            """;
     private static final String FIND_BY_ID_SQL = "select * from ticket where id = ?";
     private static final String SAVE_TICKET_SQL = """
             INSERT INTO ticket (place_id, session_id, paid) 
@@ -60,7 +64,7 @@ public class TicketRepository {
                 throw new RuntimeException("Не обновлена ни одна строка!");
             }
         } else {
-            throw new RuntimeException("Билет по id: '%s', уже оплачен".formatted(id));
+            throw new TicketAlreadyPurchasedException(TICKET_ALREADY_PURCHASED_MESSAGE.formatted(id));
         }
     }
 
@@ -80,14 +84,6 @@ public class TicketRepository {
         } catch (EmptyResultDataAccessException e) {
             log.warn("Произошла ошибка при поиске по id {}, {}", id, e.getMessage());
             return empty();
-        }
-    }
-
-    private String toStringMapping(ResultSet rs, int rowNum) {
-        try {
-            return rs.getString("session_id");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 

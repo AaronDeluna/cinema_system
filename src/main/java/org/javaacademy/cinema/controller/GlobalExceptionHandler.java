@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.javaacademy.cinema.dto.ErrorResponse;
 import org.javaacademy.cinema.exception.DataMappingException;
 import org.javaacademy.cinema.exception.NotFoundException;
+import org.javaacademy.cinema.exception.TicketAlreadyPurchasedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,9 +17,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             DataMappingException.class,
     })
-    public ResponseEntity<?> handleDataMappingException(RuntimeException e) {
+    public ResponseEntity<ErrorResponse> handleDataMappingException(RuntimeException e) {
         log.warn(e.getMessage(), e);
         return buildErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler({
+            TicketAlreadyPurchasedException.class
+    })
+    public ResponseEntity<ErrorResponse> handleBookingException(RuntimeException e) {
+        log.warn(e.getMessage(), e);
+        return buildErrorResponse(HttpStatus.UNSUPPORTED_MEDIA_TYPE, e.getMessage());
     }
 
     @ExceptionHandler({
