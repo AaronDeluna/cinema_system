@@ -16,6 +16,13 @@ public class PlaceMapper {
                 .build();
     }
 
+    public Place toEntity(PlaceDto dto) {
+        return new Place(
+                dto.getId(),
+                dto.getName()
+        );
+    }
+
     public List<PlaceDto> toDtos(List<Place> places) {
         return places.stream()
                 .map(this::toDto)

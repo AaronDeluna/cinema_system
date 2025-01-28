@@ -2,14 +2,14 @@ package org.javaacademy.cinema.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.javaacademy.cinema.dto.place.PlaceDto;
 import org.javaacademy.cinema.dto.session.SessionDto;
 import org.javaacademy.cinema.dto.ticket.TicketBookingDto;
 import org.javaacademy.cinema.dto.ticket.TicketBookingResponse;
 import org.javaacademy.cinema.dto.ticket.TicketDto;
-import org.javaacademy.cinema.entity.Place;
 import org.javaacademy.cinema.entity.Ticket;
 import org.javaacademy.cinema.exception.NotFoundException;
-import org.javaacademy.cinema.exception.TicketAlreadyPurchasedException;
+import org.javaacademy.cinema.mapper.PlaceMapper;
 import org.javaacademy.cinema.mapper.SessionMapper;
 import org.javaacademy.cinema.mapper.TicketMapper;
 import org.javaacademy.cinema.repository.PlaceRepository;
@@ -23,17 +23,13 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class TicketService {
-    private static final String BOOKING_ERROR_MESSAGE = """
-            Билет на сеанс с ID %d и местом %s не найден.
-            """;
-    private static final String TICKET_ALREADY_PURCHASED_MESSAGE = """
-            Ошибка: билет уже оплачен
-            """;
+    private static final String BOOKING_ERROR_MESSAGE = "Билет на сеанс с ID: %d или местом: %s не найден.";
     private static final boolean NOT_PAID_STATUS = false;
     private final TicketRepository ticketRepository;
     private final PlaceRepository placeRepository;
     private final SessionMapper sessionMapper;
     private final TicketMapper ticketMapper;
+    private final PlaceMapper placeMapper;
 
     public List<TicketDto> findByPaidStatus(boolean isPaid) {
         return ticketMapper.toDtos(ticketRepository.findTicketsByPaymentStatus(isPaid)
@@ -56,11 +52,11 @@ public class TicketService {
     }
 
     public void create(SessionDto sessionDto) {
-        List<Place> places = placeRepository.findAll().orElseThrow();
-        for (Place place : places) {
+        List<PlaceDto> places = placeMapper.toDtos(placeRepository.findAll().orElseThrow());
+        for (PlaceDto place : places) {
             ticketRepository.save(new Ticket(
                     sessionMapper.toEntity(sessionDto),
-                    place
+                    placeMapper.toEntity(place)
             ));
         }
     }

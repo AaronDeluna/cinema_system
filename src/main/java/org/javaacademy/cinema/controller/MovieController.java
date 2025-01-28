@@ -2,6 +2,7 @@ package org.javaacademy.cinema.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.javaacademy.cinema.dto.movie.CreateMovieDto;
+import org.javaacademy.cinema.dto.movie.MovieDto;
 import org.javaacademy.cinema.dto.movie.ResponseMovieDto;
 import org.javaacademy.cinema.service.MovieService;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ public class MovieController {
     private final MovieService movieService;
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody @Validated CreateMovieDto createMovieDto) {
+    public ResponseEntity<MovieDto> create(@RequestBody @Validated CreateMovieDto createMovieDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(movieService.create(createMovieDto));
     }
 

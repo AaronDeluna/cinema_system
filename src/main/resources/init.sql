@@ -32,10 +32,6 @@ SELECT * from session;
 SELECT * from place;
 SELECT * from ticket;
 
-SELECT t.*, p.name
-FROM ticket t join place p on p.id = t.place_id
-WHERE t.session_id = 1;
-
 -- DELETE FROM session;
 -- DELETE FROM place;
 -- DELETE FROM ticket;
