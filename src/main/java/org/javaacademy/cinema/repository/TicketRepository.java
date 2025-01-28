@@ -27,10 +27,8 @@ public class TicketRepository {
             Ошибка: билет id: '%s' уже оплачен
             """;
     private static final String FIND_BY_ID_SQL = "select * from ticket where id = ?";
-    private static final String SAVE_TICKET_SQL = """
-            INSERT INTO ticket (place_id, session_id, paid) 
-            values (?, ?, ?) RETURNING id
-            """;
+    private static final String SAVE_TICKET_SQL =
+            "INSERT INTO ticket (place_id, session_id, paid) values (?, ?, ?) RETURNING id";
     private static final String UPDATE_TICKET_PAID_SQL = "update ticket set paid = ? where id = ?";
     private static final String FIND_TICKET_BY_PAID_STATUS = "select * from ticket where paid = ?";
     private final JdbcTemplate jdbcTemplate;

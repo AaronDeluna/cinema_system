@@ -5,7 +5,6 @@ import org.javaacademy.cinema.dto.session.SessionDto;
 import org.javaacademy.cinema.entity.Session;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Component

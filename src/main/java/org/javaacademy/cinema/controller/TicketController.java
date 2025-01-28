@@ -5,7 +5,6 @@ import org.javaacademy.cinema.dto.ticket.TicketBookingDto;
 import org.javaacademy.cinema.dto.ticket.TicketBookingResponse;
 import org.javaacademy.cinema.dto.ticket.TicketDto;
 import org.javaacademy.cinema.service.TicketService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +27,7 @@ public class TicketController {
 
     @PostMapping("/booking")
     public ResponseEntity<TicketBookingResponse> booking(@RequestBody TicketBookingDto bookingDto) {
-        return ResponseEntity.ok().body( ticketService.booking(bookingDto));
+        return ResponseEntity.ok().body(ticketService.booking(bookingDto));
     }
+
 }
