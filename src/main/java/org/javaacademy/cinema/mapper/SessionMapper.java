@@ -1,7 +1,9 @@
 package org.javaacademy.cinema.mapper;
 
+import org.javaacademy.cinema.dto.session.CreateSessionDto;
 import org.javaacademy.cinema.dto.session.ResponseSessionDto;
 import org.javaacademy.cinema.dto.session.SessionDto;
+import org.javaacademy.cinema.entity.Movie;
 import org.javaacademy.cinema.entity.Session;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +27,14 @@ public class SessionMapper {
                 .movieName(session.getMovie().getName())
                 .date(session.getDatetime())
                 .price(session.getPrice())
+                .build();
+    }
+
+    public SessionDto toDto(CreateSessionDto createSessionDto, Movie movie) {
+        return SessionDto.builder()
+                .movie(movie)
+                .datetime(createSessionDto.getDatetime())
+                .price(createSessionDto.getPrice())
                 .build();
     }
 

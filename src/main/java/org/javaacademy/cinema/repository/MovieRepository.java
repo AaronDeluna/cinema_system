@@ -22,7 +22,7 @@ import static java.util.Optional.empty;
 public class MovieRepository {
     private static final String FIND_BY_ID_SQL = "select * from movie where id = ?";
     private static final String FIND_ALL_SQL = "select * from movie";
-    private static final String SAVE_MOVIE_SQL = "INSERT INTO movie (name, description) values (?, ?) RETURNING id";
+    private static final String SAVE_MOVIE_SQL = "insert into movie (name, description) values (?, ?) RETURNING id";
     private final JdbcTemplate jdbcTemplate;
 
     public Optional<Movie> save(Movie movie) {
@@ -68,7 +68,7 @@ public class MovieRepository {
             movie.setDescription(rs.getString("description"));
             return movie;
         } catch (SQLException e) {
-            throw new DataMappingException("Ошибка при маппинге значений: ", e);
+            throw new DataMappingException(e);
         }
     }
 

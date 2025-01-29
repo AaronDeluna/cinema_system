@@ -3,6 +3,7 @@ package org.javaacademy.cinema.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.javaacademy.cinema.dto.ErrorResponse;
 import org.javaacademy.cinema.exception.DataMappingException;
+import org.javaacademy.cinema.exception.EntitySaveException;
 import org.javaacademy.cinema.exception.NotFoundException;
 import org.javaacademy.cinema.exception.TicketAlreadyPurchasedException;
 import org.springframework.http.HttpStatus;
@@ -23,11 +24,19 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({
+            EntitySaveException.class,
+    })
+    public ResponseEntity<ErrorResponse> handleEntitySaveException(RuntimeException e) {
+        log.warn(e.getMessage(), e);
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+    }
+
+    @ExceptionHandler({
             TicketAlreadyPurchasedException.class
     })
-    public ResponseEntity<ErrorResponse> handleBookingException(RuntimeException e) {
+    public ResponseEntity<ErrorResponse> handleAlreadyPurchasedException(RuntimeException e) {
         log.warn(e.getMessage(), e);
-        return buildErrorResponse(HttpStatus.UNSUPPORTED_MEDIA_TYPE, e.getMessage());
+        return buildErrorResponse(HttpStatus.CONFLICT, e.getMessage());
     }
 
     @ExceptionHandler({
@@ -35,7 +44,7 @@ public class GlobalExceptionHandler {
     })
     public ResponseEntity<ErrorResponse> handleNotFoundException(RuntimeException e) {
         log.warn(e.getMessage(), e);
-        return buildErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+        return buildErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
     private ResponseEntity<ErrorResponse> buildErrorResponse(HttpStatus status, String message) {

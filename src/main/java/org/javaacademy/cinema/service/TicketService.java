@@ -23,7 +23,8 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class TicketService {
-    private static final String BOOKING_ERROR_MESSAGE = "Билет на сеанс с ID: %d или местом: %s не найден.";
+    private static final String BOOKING_TICKET_ERROR_MESSAGE = "Билет на сеанс с ID: %d или местом: %s не найден.";
+    private static final String NO_AVAILABLE_TICKETS_MESSAGE = "Не найдены доступные билеты для бронирования";
     private static final boolean NOT_PAID_STATUS = false;
     private final TicketRepository ticketRepository;
     private final PlaceRepository placeRepository;
@@ -38,18 +39,20 @@ public class TicketService {
 
     public TicketBookingResDto booking(TicketBookingDto bookingDto) {
         List<TicketDto> ticketsDto = ticketMapper.toDtos(
-                ticketRepository.findTicketsByPaymentStatus(NOT_PAID_STATUS).orElseThrow()
+                ticketRepository.findTicketsByPaymentStatus(NOT_PAID_STATUS)
+                        .orElseThrow(() -> new NotFoundException(NO_AVAILABLE_TICKETS_MESSAGE))
         );
+
         TicketDto ticketDto = ticketsDto.stream()
                 .filter(t -> Objects.equals(t.getSession().getId(), bookingDto.getSessionId()))
                 .filter(t -> Objects.equals(t.getPlace().getName(), bookingDto.getPlaceName()))
                 .findFirst()
-                .orElseThrow(
-                        () -> new NotFoundException(BOOKING_ERROR_MESSAGE)
-                );
+                .orElseThrow(() -> new NotFoundException(BOOKING_TICKET_ERROR_MESSAGE));
+
         ticketRepository.updatePurchaseStatusById(ticketDto.getId());
         return ticketMapper.toResponse(ticketDto);
     }
+
 
     public void create(SessionDto sessionDto) {
         List<PlaceDto> places = placeMapper.toDtos(placeRepository.findAll().orElseThrow());

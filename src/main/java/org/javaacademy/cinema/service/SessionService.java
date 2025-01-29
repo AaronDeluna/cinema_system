@@ -6,6 +6,7 @@ import org.javaacademy.cinema.dto.session.ResponseSessionDto;
 import org.javaacademy.cinema.dto.session.SessionDto;
 import org.javaacademy.cinema.dto.ticket.TicketDto;
 import org.javaacademy.cinema.entity.Movie;
+import org.javaacademy.cinema.exception.EntitySaveException;
 import org.javaacademy.cinema.exception.NotFoundException;
 import org.javaacademy.cinema.mapper.SessionMapper;
 import org.javaacademy.cinema.repository.MovieRepository;
@@ -17,7 +18,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class SessionService {
-    private static final String ID_NOT_FOUND_MESSAGE = "Ошибка: id: '%s', не найден";
+    private static final String ID_NOT_FOUND_ERROR_MESSAGE = "Ошибка: id: '%s', не найден";
+    private static final String SESSION_SAVE_ERROR_MESSAGE = "Не удалось сохранить сессию";
+    private static final String SESSION_NOT_FOUND_MESSAGE = "Сессии не найдены";
     private static final boolean NOT_PAID_STATUS = false;
     private final SessionRepository sessionRepository;
     private final SessionMapper sessionMapper;
@@ -27,9 +30,11 @@ public class SessionService {
     public SessionDto create(CreateSessionDto createSessionDto) {
         Movie movie = movieRepository.findById(createSessionDto.getMovieId())
                 .orElseThrow(
-                        () -> new NotFoundException(ID_NOT_FOUND_MESSAGE.formatted(createSessionDto.getMovieId()))
+                        () -> new NotFoundException(
+                                ID_NOT_FOUND_ERROR_MESSAGE.formatted(createSessionDto.getMovieId())
+                        )
                 );
-        SessionDto sessionDto = buildSessionDto(createSessionDto, movie);
+        SessionDto sessionDto = sessionMapper.toDto(createSessionDto, movie);
         SessionDto responseSession = saveSession(sessionDto);
         ticketService.create(responseSession);
         return responseSession;
@@ -45,20 +50,14 @@ public class SessionService {
     }
 
     public List<ResponseSessionDto> findAll() {
-        return sessionMapper.toResponseDtos(sessionRepository.findAll().orElseThrow());
-    }
-
-    private SessionDto buildSessionDto(CreateSessionDto createSessionDto, Movie movie) {
-        return SessionDto.builder()
-                .movie(movie)
-                .datetime(createSessionDto.getDatetime())
-                .price(createSessionDto.getPrice())
-                .build();
+        return sessionMapper.toResponseDtos(sessionRepository.findAll()
+                .orElseThrow(() -> new NotFoundException(SESSION_NOT_FOUND_MESSAGE))
+        );
     }
 
     private SessionDto saveSession(SessionDto sessionDto) {
-        return sessionMapper.toDto(
-                sessionRepository.save(sessionMapper.toEntity(sessionDto)).orElseThrow()
+        return sessionMapper.toDto(sessionRepository.save(sessionMapper.toEntity(sessionDto))
+                        .orElseThrow(() -> new EntitySaveException(SESSION_SAVE_ERROR_MESSAGE))
         );
     }
 }

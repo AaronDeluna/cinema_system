@@ -23,12 +23,10 @@ import static java.util.Optional.empty;
 @RequiredArgsConstructor
 @Slf4j
 public class TicketRepository {
-    private static final String TICKET_ALREADY_PURCHASED_MESSAGE = """
-            Ошибка: билет id: '%s' уже оплачен
-            """;
+    private static final String TICKET_ALREADY_PURCHASED_MESSAGE = "Ошибка: билет id: '%s' уже оплачен";
     private static final String FIND_BY_ID_SQL = "select * from ticket where id = ?";
     private static final String SAVE_TICKET_SQL =
-            "INSERT INTO ticket (place_id, session_id, paid) values (?, ?, ?) RETURNING id";
+            "insert into ticket (place_id, session_id, paid) values (?, ?, ?) returing id";
     private static final String UPDATE_TICKET_PAID_SQL = "update ticket set paid = ? where id = ?";
     private static final String FIND_TICKET_BY_PAID_STATUS = "select * from ticket where paid = ?";
     private final JdbcTemplate jdbcTemplate;
@@ -59,7 +57,7 @@ public class TicketRepository {
                 ps.setInt(2, id);
             });
             if (countRows < 1) {
-                throw new RuntimeException("Не обновлена ни одна строка!");
+                throw new IllegalStateException("Не обновлена ни одна строка!");
             }
         } else {
             throw new TicketAlreadyPurchasedException(TICKET_ALREADY_PURCHASED_MESSAGE.formatted(id));
