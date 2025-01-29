@@ -2,7 +2,7 @@ package org.javaacademy.cinema.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.javaacademy.cinema.dto.ticket.TicketBookingDto;
-import org.javaacademy.cinema.dto.ticket.TicketBookingResponse;
+import org.javaacademy.cinema.dto.ticket.TicketBookingResDto;
 import org.javaacademy.cinema.dto.ticket.TicketDto;
 import org.javaacademy.cinema.service.TicketService;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ public class TicketController {
     }
 
     @PostMapping("/booking")
-    public ResponseEntity<TicketBookingResponse> booking(@RequestBody TicketBookingDto bookingDto) {
+    public ResponseEntity<TicketBookingResDto> booking(@RequestBody TicketBookingDto bookingDto) {
         return ResponseEntity.ok().body(ticketService.booking(bookingDto));
     }
 

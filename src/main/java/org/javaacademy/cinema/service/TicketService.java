@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.javaacademy.cinema.dto.place.PlaceDto;
 import org.javaacademy.cinema.dto.session.SessionDto;
 import org.javaacademy.cinema.dto.ticket.TicketBookingDto;
-import org.javaacademy.cinema.dto.ticket.TicketBookingResponse;
+import org.javaacademy.cinema.dto.ticket.TicketBookingResDto;
 import org.javaacademy.cinema.dto.ticket.TicketDto;
 import org.javaacademy.cinema.entity.Ticket;
 import org.javaacademy.cinema.exception.NotFoundException;
@@ -36,7 +36,7 @@ public class TicketService {
                 .orElseThrow());
     }
 
-    public TicketBookingResponse booking(TicketBookingDto bookingDto) {
+    public TicketBookingResDto booking(TicketBookingDto bookingDto) {
         List<TicketDto> ticketsDto = ticketMapper.toDtos(
                 ticketRepository.findTicketsByPaymentStatus(NOT_PAID_STATUS).orElseThrow()
         );

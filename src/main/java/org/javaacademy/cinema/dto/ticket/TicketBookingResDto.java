@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class TicketBookingResponse {
+public class TicketBookingResDto {
     @JsonProperty("ticket_id")
     private Integer ticketId;
     @JsonProperty("place_name")

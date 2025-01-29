@@ -1,6 +1,6 @@
 package org.javaacademy.cinema.mapper;
 
-import org.javaacademy.cinema.dto.ticket.TicketBookingResponse;
+import org.javaacademy.cinema.dto.ticket.TicketBookingResDto;
 import org.javaacademy.cinema.dto.ticket.TicketDto;
 import org.javaacademy.cinema.entity.Ticket;
 import org.springframework.stereotype.Component;
@@ -19,8 +19,8 @@ public class TicketMapper {
                 .build();
     }
 
-    public TicketBookingResponse toResponse(TicketDto dto) {
-        return TicketBookingResponse.builder()
+    public TicketBookingResDto toResponse(TicketDto dto) {
+        return TicketBookingResDto.builder()
                 .ticketId(dto.getId())
                 .movieName(dto.getSession().getMovie().getName())
                 .placeName(dto.getPlace().getName())
