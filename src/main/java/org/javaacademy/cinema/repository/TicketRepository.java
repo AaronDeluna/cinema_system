@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.javaacademy.cinema.entity.Ticket;
 import org.javaacademy.cinema.exception.DataMappingException;
-import org.javaacademy.cinema.exception.NotFoundException;
-import org.javaacademy.cinema.exception.TicketAlreadyPurchasedException;
 import org.javaacademy.cinema.util.DbUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -23,12 +21,16 @@ import static java.util.Optional.empty;
 @RequiredArgsConstructor
 @Slf4j
 public class TicketRepository {
-    private static final String TICKET_ALREADY_PURCHASED_MESSAGE = "Ошибка: билет id: '%s' уже оплачен";
     private static final String FIND_BY_ID_SQL = "select * from ticket where id = ?";
     private static final String SAVE_TICKET_SQL =
-            "insert into ticket (place_id, session_id, paid) values (?, ?, ?) returing id";
-    private static final String UPDATE_TICKET_PAID_SQL = "update ticket set paid = ? where id = ?";
+            "insert into ticket (place_id, session_id, paid) values (?, ?, ?) returning id";
+    private static final String UPDATE_TICKET_PAID_SQL = "update ticket set paid = ? where id = ? and session_id = ?";
     private static final String FIND_TICKET_BY_PAID_STATUS = "select * from ticket where paid = ?";
+    private static final String FIND_ALL_TICKET_BY_SESSION_ID = "select * from ticket where session_id = ?";
+    private static final int PARAM_PAID_INDEX = 1;
+    private static final int PARAM_ID_INDEX = 2;
+    private static final int PARAM_SESSION_ID_INDEX = 3;
+
     private final JdbcTemplate jdbcTemplate;
     private final SessionRepository sessionRepository;
     private final PlaceRepository placeRepository;
@@ -48,28 +50,33 @@ public class TicketRepository {
         }
     }
 
-    public void updatePurchaseStatusById(int id) {
-        Ticket ticket = findById(id)
-                .orElseThrow(() -> new NotFoundException("Билет с id: '%s' не найден".formatted(id)));
-        if (!ticket.isPaid()) {
-            int countRows = jdbcTemplate.update(UPDATE_TICKET_PAID_SQL, ps -> {
-                ps.setBoolean(1, true);
-                ps.setInt(2, id);
-            });
-            if (countRows < 1) {
-                throw new IllegalStateException("Не обновлена ни одна строка!");
-            }
-        } else {
-            throw new TicketAlreadyPurchasedException(TICKET_ALREADY_PURCHASED_MESSAGE.formatted(id));
+    public void updatePurchaseStatusById(int id, int sessionId) {
+        int countRows = jdbcTemplate.update(UPDATE_TICKET_PAID_SQL, ps -> {
+            ps.setBoolean(PARAM_PAID_INDEX, true);
+            ps.setInt(PARAM_ID_INDEX, id);
+            ps.setInt(PARAM_SESSION_ID_INDEX, sessionId);
+        });
+        if (countRows < 1) {
+            throw new IllegalStateException("Не обновлена ни одна строка!");
         }
     }
 
-    public Optional<List<Ticket>> findTicketsByPaymentStatus(boolean isPaid) {
+    public Optional<List<Ticket>> findAllByPaymentStatus(boolean isPaid) {
         try {
             List<Ticket> tickets = jdbcTemplate.query(FIND_TICKET_BY_PAID_STATUS, this::toTicket, isPaid);
             return Optional.of(tickets);
         } catch (DataAccessException e) {
             log.warn("Произошла ошибка при поиске билетов по статусу: {}", e.getMessage());
+            return empty();
+        }
+    }
+
+    public Optional<List<Ticket>> findAllBySessionId(int sessionId) {
+        try {
+            List<Ticket> tickets = jdbcTemplate.query(FIND_ALL_TICKET_BY_SESSION_ID, this::toTicket, sessionId);
+            return Optional.of(tickets);
+        } catch (DataAccessException e) {
+            log.warn("Произошла ошибка при поиске билета по sessionId: {}", sessionId);
             return empty();
         }
     }

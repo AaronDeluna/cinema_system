@@ -9,6 +9,7 @@ import org.javaacademy.cinema.dto.ticket.TicketBookingResDto;
 import org.javaacademy.cinema.dto.ticket.TicketDto;
 import org.javaacademy.cinema.entity.Ticket;
 import org.javaacademy.cinema.exception.NotFoundException;
+import org.javaacademy.cinema.exception.TicketAlreadyPurchasedException;
 import org.javaacademy.cinema.mapper.PlaceMapper;
 import org.javaacademy.cinema.mapper.SessionMapper;
 import org.javaacademy.cinema.mapper.TicketMapper;
@@ -23,36 +24,15 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class TicketService {
-    private static final String BOOKING_TICKET_ERROR_MESSAGE = "Билет на сеанс с ID: %d или местом: %s не найден.";
+    private static final String BOOKING_TICKET_ERROR_MESSAGE = "Билет на сеанс с id: %s или местом: %s не найден.";
     private static final String NO_AVAILABLE_TICKETS_MESSAGE = "Не найдены доступные билеты для бронирования";
-    private static final boolean NOT_PAID_STATUS = false;
+    private static final String TICKET_BY_STATUS_NOT_FOUND_MESSAGE = "Билеты с статусом: '%s' не найдены";
+    private static final String TICKET_ALREADY_PURCHASED_MESSAGE = "Ошибка: место: '%s' уже занято";
     private final TicketRepository ticketRepository;
     private final PlaceRepository placeRepository;
     private final SessionMapper sessionMapper;
     private final TicketMapper ticketMapper;
     private final PlaceMapper placeMapper;
-
-    public List<TicketDto> findByPaidStatus(boolean isPaid) {
-        return ticketMapper.toDtos(ticketRepository.findTicketsByPaymentStatus(isPaid)
-                .orElseThrow());
-    }
-
-    public TicketBookingResDto booking(TicketBookingDto bookingDto) {
-        List<TicketDto> ticketsDto = ticketMapper.toDtos(
-                ticketRepository.findTicketsByPaymentStatus(NOT_PAID_STATUS)
-                        .orElseThrow(() -> new NotFoundException(NO_AVAILABLE_TICKETS_MESSAGE))
-        );
-
-        TicketDto ticketDto = ticketsDto.stream()
-                .filter(t -> Objects.equals(t.getSession().getId(), bookingDto.getSessionId()))
-                .filter(t -> Objects.equals(t.getPlace().getName(), bookingDto.getPlaceName()))
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException(BOOKING_TICKET_ERROR_MESSAGE));
-
-        ticketRepository.updatePurchaseStatusById(ticketDto.getId());
-        return ticketMapper.toResponse(ticketDto);
-    }
-
 
     public void create(SessionDto sessionDto) {
         List<PlaceDto> places = placeMapper.toDtos(placeRepository.findAll().orElseThrow());
@@ -61,6 +41,42 @@ public class TicketService {
                     sessionMapper.toEntity(sessionDto),
                     placeMapper.toEntity(place)
             ));
+        }
+    }
+
+    public List<TicketDto> findAllByPaidStatus(boolean isPaid) {
+        return ticketMapper.toDtos(ticketRepository.findAllByPaymentStatus(isPaid)
+                .orElseThrow(() -> new NotFoundException(TICKET_BY_STATUS_NOT_FOUND_MESSAGE.formatted(isPaid))));
+    }
+
+    public TicketBookingResDto booking(TicketBookingDto bookingDto) {
+        List<TicketDto> ticketsDto = ticketMapper.toDtos(
+                ticketRepository.findAllBySessionId(bookingDto.getSessionId())
+                        .orElseThrow(() -> new NotFoundException(NO_AVAILABLE_TICKETS_MESSAGE))
+        );
+
+        TicketDto ticketDto = ticketsDto.stream()
+                .filter(ticket -> isMatchingTicket(ticket, bookingDto))
+                .peek(this::validateNotPurchased)
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException(
+                        BOOKING_TICKET_ERROR_MESSAGE.formatted(bookingDto.getSessionId(), bookingDto.getPlaceName())
+                ));
+
+        ticketRepository.updatePurchaseStatusById(ticketDto.getId(), ticketDto.getSession().getId());
+        return ticketMapper.toResponse(ticketDto);
+    }
+
+    private boolean isMatchingTicket(TicketDto ticket, TicketBookingDto bookingDto) {
+        return Objects.equals(ticket.getSession().getId(), bookingDto.getSessionId())
+                && Objects.equals(ticket.getPlace().getName(), bookingDto.getPlaceName());
+    }
+
+    private void validateNotPurchased(TicketDto ticket) {
+        if (ticket.isPaid()) {
+            throw new TicketAlreadyPurchasedException(
+                    TICKET_ALREADY_PURCHASED_MESSAGE.formatted(ticket.getPlace().getName())
+            );
         }
     }
 }

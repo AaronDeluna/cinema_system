@@ -26,19 +26,3 @@ CREATE TABLE ticket
     session_id INT REFERENCES session (id),
     paid BOOLEAN
 );
-
-SELECT * from movie;
-SELECT * from session;
-SELECT * from place;
-SELECT * from ticket;
-
--- DELETE FROM session;
--- DELETE FROM place;
--- DELETE FROM ticket;
-
-DROP TABLE movie;
-DROP TABLE session;
-DROP TABLE place;
-DROP TABLE ticket;
-
-

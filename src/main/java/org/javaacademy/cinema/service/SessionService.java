@@ -1,11 +1,13 @@
 package org.javaacademy.cinema.service;
 
 import lombok.RequiredArgsConstructor;
+import org.javaacademy.cinema.dto.place.PlaceDto;
 import org.javaacademy.cinema.dto.session.CreateSessionDto;
 import org.javaacademy.cinema.dto.session.ResponseSessionDto;
 import org.javaacademy.cinema.dto.session.SessionDto;
 import org.javaacademy.cinema.dto.ticket.TicketDto;
 import org.javaacademy.cinema.entity.Movie;
+import org.javaacademy.cinema.entity.Ticket;
 import org.javaacademy.cinema.exception.EntitySaveException;
 import org.javaacademy.cinema.exception.NotFoundException;
 import org.javaacademy.cinema.mapper.SessionMapper;
@@ -41,7 +43,7 @@ public class SessionService {
     }
 
     public List<String> findAllFreePlaceById(int number) {
-        List<TicketDto> ticketDtos = ticketService.findByPaidStatus(NOT_PAID_STATUS);
+        List<TicketDto> ticketDtos = ticketService.findAllByPaidStatus(NOT_PAID_STATUS);
         return ticketDtos.stream()
                 .filter(ticket -> ticket.getSession().getId() == number)
                 .filter(ticket -> !ticket.isPaid())
