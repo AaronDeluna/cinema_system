@@ -11,13 +11,15 @@ import org.javaacademy.cinema.mapper.MovieMapper;
 import org.javaacademy.cinema.repository.MovieRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+
+import static java.util.Collections.emptyList;
 
 @Service
 @RequiredArgsConstructor
 public class MovieService {
     private static final String MOVIE_SAVE_ERROR_MESSAGE = "Не удалось сохранить фильм";
-    private static final String MOVIE_NOT_FOUND_MESSAGE = "Фильмы не найдены";
     private final MovieRepository movieRepository;
     private final MovieMapper movieMapper;
 
@@ -28,8 +30,6 @@ public class MovieService {
     }
 
     public List<ResponseMovieDto> findAll() {
-        return movieMapper.toDtos(movieRepository.findAll()
-                .orElseThrow(() -> new NotFoundException(MOVIE_NOT_FOUND_MESSAGE))
-        );
+        return movieMapper.toDtos(movieRepository.findAll().orElse(emptyList()));
     }
 }
