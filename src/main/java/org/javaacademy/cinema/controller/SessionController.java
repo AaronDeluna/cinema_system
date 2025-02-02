@@ -1,6 +1,13 @@
 package org.javaacademy.cinema.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.javaacademy.cinema.dto.ErrorResponse;
 import org.javaacademy.cinema.dto.session.CreateSessionDto;
 import org.javaacademy.cinema.dto.session.ResponseSessionDto;
 import org.javaacademy.cinema.dto.session.SessionDto;
@@ -23,16 +30,99 @@ import java.util.List;
 public class SessionController {
     private final SessionService sessionService;
 
+    @Operation(
+            summary = "Создание сеансов"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Успешно создано",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = SessionDto.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Фильм не найден",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Внутренняя ошибка сервера",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
     @PostMapping
-    public ResponseEntity<SessionDto> create(@Validated @RequestBody CreateSessionDto createSessionDto) {
+    public ResponseEntity<SessionDto> create(@RequestBody @Validated CreateSessionDto createSessionDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(sessionService.create(createSessionDto));
     }
 
+    @Operation(
+            summary = "Получение всех сеансов"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Успешно",
+                    content = @Content(
+                            mediaType = "application/json",
+                            array = @ArraySchema(
+                                    schema = @Schema(implementation = ResponseSessionDto.class)
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Внутренняя ошибка сервера",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
     @GetMapping
     public ResponseEntity<List<ResponseSessionDto>> getAll() {
         return ResponseEntity.ok().body(sessionService.findAll());
     }
 
+    @Operation(
+            summary = "Получение мест, доступных для покупки"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Успешно",
+                    content = @Content(
+                            mediaType = "application/json",
+                            array = @ArraySchema(
+                                    schema = @Schema(implementation = String.class)
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Места не найдены",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Внутренняя ошибка сервера",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
     @GetMapping("/{number}/free-place")
     public ResponseEntity<List<String>> getAllFreePlaceById(@PathVariable Integer number) {
         return ResponseEntity.ok().body(sessionService.findAllFreePlaceById(number));
