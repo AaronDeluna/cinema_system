@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.javaacademy.cinema.dto.ErrorResponse;
 import org.javaacademy.cinema.dto.movie.CreateMovieDto;
 import org.javaacademy.cinema.dto.movie.MovieDto;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/movie")
 @RequiredArgsConstructor
@@ -55,6 +57,7 @@ public class MovieController {
     @PostMapping
     public ResponseEntity<MovieDto> create(@RequestHeader("user-token") String token,
                                            @RequestBody @Validated CreateMovieDto createMovieDto) {
+        log.info("RequestHeader пришел нам такой токен: {}", token);
         TokenValidator.tokenValidation(token);
         return ResponseEntity.status(HttpStatus.CREATED).body(movieService.create(createMovieDto));
     }

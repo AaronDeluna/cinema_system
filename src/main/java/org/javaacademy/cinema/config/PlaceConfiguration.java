@@ -6,7 +6,4 @@ import org.springframework.stereotype.Component;
 @Component
 @EnableConfigurationProperties(PlaceProperty.class)
 public class PlaceConfiguration {
-    private char startRow;
-    private char endRow;
-    private int maxSeatsPerRow;
 }

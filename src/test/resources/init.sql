@@ -26,3 +26,14 @@ CREATE TABLE ticket
     session_id INT REFERENCES session (id),
     paid BOOLEAN
 );
+
+select *
+from movie;
+
+DELETE FROM movie;
+DELETE FROM ticket;
+DELETE FROM place;
+DELETE FROM session;
+
+
+TRUNCATE TABLE movie, ticket, place, session RESTART IDENTITY CASCADE;

@@ -44,8 +44,7 @@ public class MovieControllerTest {
             .setBasePath("/api/movie")
             .setContentType(ContentType.JSON)
             .log(LogDetail.ALL)
-            .build()
-            .header(header);
+            .build();
     private final ResponseSpecification responseSpecification = new ResponseSpecBuilder()
             .log(LogDetail.ALL)
             .build();
@@ -69,6 +68,7 @@ public class MovieControllerTest {
                 .build();
 
         MovieDto movieDto = given(requestSpecification)
+                .header(header)
                 .body(createMovieDto)
                 .post()
                 .then()

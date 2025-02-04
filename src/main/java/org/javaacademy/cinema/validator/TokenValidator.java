@@ -11,14 +11,10 @@ import java.util.Objects;
 public class TokenValidator {
     public static final String INVALID_TOKEN_MESSAGE =
             "Ошибка валидации токена: предоставленный токен не совпадает с ожидаемым.";
-
-//    @Value("${cinema.admin-token}")
-    private String adminToken = "secretadmin123";
+    private String ADMIN_TOKEN = "secretadmin123";
 
     public void tokenValidation(String token) {
-        log.info("adminToken: {}", adminToken);
-        log.info("token: {}", token);
-        if (!Objects.equals(adminToken, token)) {
+        if (!Objects.equals(ADMIN_TOKEN, token)) {
             throw new InvalidTokenException(INVALID_TOKEN_MESSAGE);
         }
     }
