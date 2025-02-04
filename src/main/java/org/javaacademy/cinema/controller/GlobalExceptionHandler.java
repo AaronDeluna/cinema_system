@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.javaacademy.cinema.dto.ErrorResponse;
 import org.javaacademy.cinema.exception.DataMappingException;
 import org.javaacademy.cinema.exception.EntitySaveException;
+import org.javaacademy.cinema.exception.InvalidTokenException;
 import org.javaacademy.cinema.exception.NotFoundException;
 import org.javaacademy.cinema.exception.TicketAlreadyPurchasedException;
 import org.springframework.http.HttpStatus;
@@ -45,6 +46,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleNotFoundException(RuntimeException e) {
         log.warn(e.getMessage(), e);
         return buildErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler({
+            InvalidTokenException.class
+    })
+    public ResponseEntity<ErrorResponse> handleTokenException(RuntimeException e) {
+        log.warn(e.getMessage(), e);
+        return buildErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
     }
 
     @ExceptionHandler

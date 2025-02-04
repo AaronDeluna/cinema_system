@@ -12,10 +12,12 @@ import org.javaacademy.cinema.dto.ticket.TicketBookingDto;
 import org.javaacademy.cinema.dto.ticket.TicketBookingResDto;
 import org.javaacademy.cinema.dto.ticket.TicketDto;
 import org.javaacademy.cinema.service.TicketService;
+import org.javaacademy.cinema.validator.TokenValidator;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -60,7 +62,8 @@ public class TicketController {
             )
     })
     @GetMapping("/saled")
-    public ResponseEntity<List<TicketDto>> findAllByPaidStatus() {
+    public ResponseEntity<List<TicketDto>> findAllByPaidStatus(@RequestHeader("user-token") String token) {
+        TokenValidator.tokenValidation(token);
         return ResponseEntity.ok().body(ticketService.findAllByPaidStatus(PAID_STATUS));
     }
 

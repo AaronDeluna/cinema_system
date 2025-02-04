@@ -12,12 +12,14 @@ import org.javaacademy.cinema.dto.movie.CreateMovieDto;
 import org.javaacademy.cinema.dto.movie.MovieDto;
 import org.javaacademy.cinema.dto.movie.ResponseMovieDto;
 import org.javaacademy.cinema.service.MovieService;
+import org.javaacademy.cinema.validator.TokenValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -51,7 +53,9 @@ public class MovieController {
             )
     })
     @PostMapping
-    public ResponseEntity<MovieDto> create(@RequestBody @Validated CreateMovieDto createMovieDto) {
+    public ResponseEntity<MovieDto> create(@RequestHeader("user-token") String token,
+                                           @RequestBody @Validated CreateMovieDto createMovieDto) {
+        TokenValidator.tokenValidation(token);
         return ResponseEntity.status(HttpStatus.CREATED).body(movieService.create(createMovieDto));
     }
 

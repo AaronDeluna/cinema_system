@@ -6,12 +6,10 @@ import org.javaacademy.cinema.dto.movie.MovieDto;
 import org.javaacademy.cinema.dto.movie.ResponseMovieDto;
 import org.javaacademy.cinema.entity.Movie;
 import org.javaacademy.cinema.exception.EntitySaveException;
-import org.javaacademy.cinema.exception.NotFoundException;
 import org.javaacademy.cinema.mapper.MovieMapper;
 import org.javaacademy.cinema.repository.MovieRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.emptyList;

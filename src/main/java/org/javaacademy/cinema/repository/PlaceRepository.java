@@ -3,7 +3,7 @@ package org.javaacademy.cinema.repository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.javaacademy.cinema.config.PlaceConfiguration;
+import org.javaacademy.cinema.config.PlaceProperty;
 import org.javaacademy.cinema.entity.Place;
 import org.javaacademy.cinema.exception.DataMappingException;
 import org.springframework.dao.DataAccessException;
@@ -28,16 +28,16 @@ public class PlaceRepository {
     private static final String SAVE_PLACE_SQL = "insert into place (name) values (?)";
     private static final String PLACE_NUMBER_FORMAT = "%s%s";
     private final JdbcTemplate jdbcTemplate;
-    private final PlaceConfiguration placeConfiguration;
+    private final PlaceProperty placeProperty;
 
     @PostConstruct
     public void initPlace() {
         Integer count = jdbcTemplate.queryForObject(PLACE_COUNT_SQL, Integer.class);
         if (count == 0) {
             createPlace(
-                    placeConfiguration.getStartRow(),
-                    placeConfiguration.getEndRow(),
-                    placeConfiguration.getMaxSeatsPerRow()
+                    placeProperty.getStartRow(),
+                    placeProperty.getEndRow(),
+                    placeProperty.getMaxSeatsPerRow()
             );
         }
     }
