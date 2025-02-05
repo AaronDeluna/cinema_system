@@ -118,14 +118,6 @@ public class SessionController {
                             mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class)
                     )
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "Внутренняя ошибка сервера",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
-                    )
             )
     })
     @GetMapping("/{number}/free-place")

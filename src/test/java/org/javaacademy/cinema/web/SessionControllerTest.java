@@ -138,7 +138,7 @@ public class SessionControllerTest {
         CreateSessionDto createSessionDto = CreateSessionDto.builder()
                 .movieId(movieId)
                 .datetime(dateTime)
-                .price(MOVIE_PRICE)
+                .price(BigDecimal.valueOf(10000000000L))
                 .build();
 
         given(requestSpecification)
@@ -170,6 +170,16 @@ public class SessionControllerTest {
         assertEquals(SESSION_COUNT, sessionDtos.size());
         assertEquals(expectedMovieName, sessionDtos.get(0).getMovieName());
         assertEquals(0, MOVIE_PRICE.compareTo(sessionDtos.get(0).getPrice()));
+    }
+
+    @Test
+    @DisplayName("Ошибка при попытке получить доступ к свободным местам для несуществующей сессии по указанному id")
+    public void shouldReturnErrorWhenGettingFreeSeatsForNonExistentSession() {
+        given(requestSpecification)
+                .get("/10/free-place")
+                .then()
+                .spec(responseSpecification)
+                .statusCode(NOT_FOUND.value());
     }
 
     private void generateMoviesWithSessions(int count, String movieName, String movieDescription, BigDecimal price) {
