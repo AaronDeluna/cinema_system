@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8080
 
 spring:
   datasource:
@@ -13,3 +13,5 @@ cinema:
     startRow: A
     endRow: C
     maxSeatsPerRow: 3
+  admin:
+    token: secretadmin123

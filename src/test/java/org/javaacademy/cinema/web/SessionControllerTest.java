@@ -44,7 +44,10 @@ public class SessionControllerTest {
     private static final BigDecimal MOVIE_PRICE = valueOf(1000);
     private static final int SESSION_COUNT = 3;
     private static final String TRUNCATE_TABLES_SQL = """
-            TRUNCATE TABLE movie, ticket, place, session RESTART IDENTITY CASCADE
+            DELETE FROM ticket;
+            DELETE FROM place;
+            DELETE FROM session;
+            DELETE FROM movie;
             """;
     private final Header header = new Header("user-token", "secretadmin123");
     private final RequestSpecification requestSpecification = new RequestSpecBuilder()

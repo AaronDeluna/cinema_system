@@ -30,10 +30,7 @@ CREATE TABLE ticket
 select *
 from movie;
 
-DELETE FROM movie;
 DELETE FROM ticket;
 DELETE FROM place;
 DELETE FROM session;
-
-
-TRUNCATE TABLE movie, ticket, place, session RESTART IDENTITY CASCADE;
+DELETE FROM movie;

@@ -32,9 +32,10 @@ SELECT * from session;
 SELECT * from place;
 SELECT * from ticket;
 
--- DELETE FROM session;
--- DELETE FROM place;
--- DELETE FROM ticket;
+DELETE FROM session;
+DELETE FROM place;
+DELETE FROM ticket;
+DELETE FROM movie;
 
 DROP TABLE movie;
 DROP TABLE session;
