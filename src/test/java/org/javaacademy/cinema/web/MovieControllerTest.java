@@ -36,7 +36,7 @@ import static org.springframework.http.HttpStatus.OK;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class MovieControllerTest {
     private static final int EXPECTED_LIST_SIZE = 3;
-    private static final String TRUNCATE_TABLES_SQL = """
+    private static final String DELETE_TABLES_SQL = """
             DELETE FROM ticket;
             DELETE FROM place;
             DELETE FROM session;
@@ -59,7 +59,7 @@ public class MovieControllerTest {
 
     @BeforeEach
     public void cleanUpDatabase() {
-        jdbcTemplate.execute(TRUNCATE_TABLES_SQL);
+        jdbcTemplate.execute(DELETE_TABLES_SQL);
     }
 
     @Test

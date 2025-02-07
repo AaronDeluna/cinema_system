@@ -16,9 +16,4 @@ public class Session {
     private LocalDateTime datetime;
     private BigDecimal price;
 
-    public Session(Movie movie, LocalDateTime datetime, BigDecimal price) {
-        this.movie = movie;
-        this.datetime = datetime;
-        this.price = price;
-    }
 }

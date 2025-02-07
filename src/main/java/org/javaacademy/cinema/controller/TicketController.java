@@ -44,22 +44,6 @@ public class TicketController {
                                     schema = @Schema(implementation = TicketDto.class)
                             )
                     )
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Билеты не найдены",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "Внутренняя ошибка сервера",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
-                    )
             )
     })
     @GetMapping("/saled")
@@ -91,14 +75,6 @@ public class TicketController {
             @ApiResponse(
                     responseCode = "404",
                     description = "Билет не найден",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "Внутренняя ошибка сервера",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class)

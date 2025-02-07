@@ -17,6 +17,7 @@ import org.javaacademy.cinema.repository.PlaceRepository;
 import org.javaacademy.cinema.repository.TicketRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -46,7 +47,7 @@ public class TicketService {
 
     public List<TicketDto> findAllByPaidStatus(boolean isPaid) {
         return ticketMapper.toDtos(ticketRepository.findAllByPaymentStatus(isPaid)
-                .orElseThrow(() -> new NotFoundException(TICKET_BY_STATUS_NOT_FOUND_MESSAGE.formatted(isPaid))));
+                .orElse(Collections.emptyList()));
     }
 
     public TicketBookingResDto booking(TicketBookingDto bookingDto) {

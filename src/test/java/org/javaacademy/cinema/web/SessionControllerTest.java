@@ -43,7 +43,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class SessionControllerTest {
     private static final BigDecimal MOVIE_PRICE = valueOf(1000);
     private static final int SESSION_COUNT = 3;
-    private static final String TRUNCATE_TABLES_SQL = """
+    private static final String DELETE_TABLES_SQL = """
             DELETE FROM ticket;
             DELETE FROM place;
             DELETE FROM session;
@@ -69,7 +69,7 @@ public class SessionControllerTest {
 
     @BeforeEach
     public void cleanUpDatabase() {
-        jdbcTemplate.execute(TRUNCATE_TABLES_SQL);
+        jdbcTemplate.execute(DELETE_TABLES_SQL);
     }
 
     @Test
