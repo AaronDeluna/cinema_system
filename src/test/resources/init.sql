@@ -27,22 +27,20 @@ CREATE TABLE ticket
     paid BOOLEAN
 );
 
-SELECT * from movie;
-SELECT * from session;
-SELECT * from place;
-SELECT * from ticket;
 
-DELETE FROM session;
-DELETE FROM place;
-DELETE FROM ticket;
-DELETE FROM movie;
+select *
+from movie;
 
-DROP TABLE movie;
-DROP TABLE session;
-DROP TABLE place;
-DROP TABLE ticket;
-
-insert into place (name) values ('A1');
+select *
+from session;
 
 select *
 from ticket;
+
+select *
+from place;
+
+DELETE FROM ticket;
+DELETE FROM place;
+DELETE FROM session;
+DELETE FROM movie;
