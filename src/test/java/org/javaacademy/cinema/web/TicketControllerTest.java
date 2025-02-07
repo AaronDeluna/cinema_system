@@ -1,6 +1,5 @@
 package org.javaacademy.cinema.web;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.common.mapper.TypeRef;
@@ -20,8 +19,6 @@ import org.javaacademy.cinema.service.MovieService;
 import org.javaacademy.cinema.service.SessionService;
 import org.javaacademy.cinema.service.TicketService;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +32,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
+import static java.math.BigDecimal.valueOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -46,6 +43,7 @@ import static org.springframework.http.HttpStatus.OK;
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class TicketControllerTest {
+    private static final BigDecimal MOVIE_PRICE = valueOf(1000);
     private static final String DELETE_TABLES_SQL = """
             DELETE FROM ticket;
             DELETE FROM place;
@@ -89,7 +87,7 @@ public class TicketControllerTest {
         CreateSessionDto createSessionDto = CreateSessionDto.builder()
                 .movieId(movieId)
                 .datetime(LocalDateTime.now())
-                .price(BigDecimal.valueOf(100))
+                .price(MOVIE_PRICE)
                 .build();
 
         SessionDto sessionDto = sessionService.create(createSessionDto);
@@ -127,7 +125,7 @@ public class TicketControllerTest {
         CreateSessionDto createSessionDto = CreateSessionDto.builder()
                 .movieId(movieId)
                 .datetime(LocalDateTime.now())
-                .price(BigDecimal.valueOf(100))
+                .price(MOVIE_PRICE)
                 .build();
 
         SessionDto sessionDto = sessionService.create(createSessionDto);
@@ -165,7 +163,7 @@ public class TicketControllerTest {
         CreateSessionDto createSessionDto = CreateSessionDto.builder()
                 .movieId(movieId)
                 .datetime(LocalDateTime.now())
-                .price(BigDecimal.valueOf(100))
+                .price(MOVIE_PRICE)
                 .build();
 
         SessionDto sessionDto = sessionService.create(createSessionDto);
@@ -203,7 +201,4 @@ public class TicketControllerTest {
                 .spec(responseSpecification)
                 .statusCode(NOT_FOUND.value());
     }
-
-
-
 }

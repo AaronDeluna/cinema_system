@@ -42,6 +42,7 @@ import static org.springframework.http.HttpStatus.OK;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class SessionControllerTest {
     private static final BigDecimal MOVIE_PRICE = valueOf(1000);
+    private static final BigDecimal NOT_CORRECT_MOVIE_PRICE = valueOf(10000000000L);
     private static final int SESSION_COUNT = 3;
     private static final String DELETE_TABLES_SQL = """
             DELETE FROM ticket;
@@ -138,7 +139,7 @@ public class SessionControllerTest {
         CreateSessionDto createSessionDto = CreateSessionDto.builder()
                 .movieId(movieId)
                 .datetime(dateTime)
-                .price(BigDecimal.valueOf(10000000000L))
+                .price(NOT_CORRECT_MOVIE_PRICE)
                 .build();
 
         given(requestSpecification)
