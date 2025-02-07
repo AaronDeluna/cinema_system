@@ -27,7 +27,6 @@ import java.util.Objects;
 public class TicketService {
     private static final String BOOKING_TICKET_ERROR_MESSAGE = "Билет на сеанс с id: %s или местом: %s не найден.";
     private static final String NO_AVAILABLE_TICKETS_MESSAGE = "Не найдены доступные билеты для бронирования";
-    private static final String TICKET_BY_STATUS_NOT_FOUND_MESSAGE = "Билеты с статусом: '%s' не найдены";
     private static final String TICKET_ALREADY_PURCHASED_MESSAGE = "Ошибка: место: '%s' уже занято";
     private final TicketRepository ticketRepository;
     private final PlaceRepository placeRepository;
