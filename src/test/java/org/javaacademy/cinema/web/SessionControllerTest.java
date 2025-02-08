@@ -107,7 +107,7 @@ public class SessionControllerTest {
     }
 
     @Test
-    @DisplayName("Ошибка при попытке создания сессии для несуществующего фильма")
+    @DisplayName("Ошибка при попытке создания сеанса для несуществующего фильма")
     public void shouldFailToCreateSessionForNonExistentMovie() {
         LocalDateTime dateTime = LocalDateTime.now();
 
@@ -126,7 +126,7 @@ public class SessionControllerTest {
     }
 
     @Test
-    @DisplayName("Ошибка при попытке создания сессии c некорректными данными")
+    @DisplayName("Ошибка при попытке создания сеанса c некорректными данными")
     public void shouldFailToCreateSessionWithInvalidData() {
         CreateMovieDto createMovieDto = CreateMovieDto.builder()
                 .name("test name")
@@ -155,7 +155,7 @@ public class SessionControllerTest {
     public void getAllSuccess() {
         String movieName = "test name: %s";
         String movieDescription = "test description: %s";
-        generateMoviesWithSessions(SESSION_COUNT, movieName, movieDescription, MOVIE_PRICE);
+        generateMoviesWithSessions(movieName, movieDescription, MOVIE_PRICE);
 
         List<ResponseSessionDto> sessionDtos = given(requestSpecification)
                 .get()
@@ -174,7 +174,7 @@ public class SessionControllerTest {
     }
 
     @Test
-    @DisplayName("Ошибка при попытке получить доступ к свободным местам для несуществующей сессии по указанному id")
+    @DisplayName("Ошибка при попытке получить доступ к свободным местам для несуществующего сеанса по указанному id")
     public void shouldReturnErrorWhenGettingFreeSeatsForNonExistentSession() {
         given(requestSpecification)
                 .get("/10/free-place")
@@ -183,8 +183,8 @@ public class SessionControllerTest {
                 .statusCode(NOT_FOUND.value());
     }
 
-    private void generateMoviesWithSessions(int count, String movieName, String movieDescription, BigDecimal price) {
-        for (int i = 1; i <= count; i++) {
+    private void generateMoviesWithSessions(String movieName, String movieDescription, BigDecimal price) {
+        for (int i = 1; i <= SESSION_COUNT; i++) {
             CreateMovieDto createMovieDto = CreateMovieDto.builder()
                     .name(movieName.formatted(i))
                     .description(movieDescription.formatted(i))

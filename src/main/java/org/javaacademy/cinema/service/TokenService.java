@@ -13,7 +13,7 @@ public class TokenService {
     public static final String INVALID_TOKEN_MESSAGE =
             "Ошибка валидации токена: предоставленный токен не совпадает с ожидаемым.";
     @Value("${cinema.admin.token}")
-    private String adminToken = "secretadmin123";
+    private String adminToken;
 
     public void tokenValidation(String token) {
         if (!Objects.equals(adminToken, token)) {
