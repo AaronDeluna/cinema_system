@@ -50,7 +50,7 @@ public class TicketControllerTest {
             DELETE FROM session;
             DELETE FROM movie;
             """;
-    private final Header header = new Header("user-token", "secretadmin123");
+    private final Header header = new Header("user-token",  "secretadmin123");
     private final RequestSpecification requestSpecification = new RequestSpecBuilder()
             .setBasePath("/api/ticket")
             .setContentType(ContentType.JSON)
@@ -78,26 +78,17 @@ public class TicketControllerTest {
     @Test
     @DisplayName("Успешное получение купленых билетов")
     public void findAllByPaidStatusSuccess() {
-        CreateMovieDto createMovieDto = CreateMovieDto.builder()
-                .name("test name")
-                .description("test description")
-                .build();
-        int movieId = movieService.create(createMovieDto).getId();
+        String expectedName = "test name";
+        String expectedDescription = "test description";
+        String expectedPlace = "A3";
+        LocalDateTime dateTime = LocalDateTime.now();
 
-        CreateSessionDto createSessionDto = CreateSessionDto.builder()
-                .movieId(movieId)
-                .datetime(LocalDateTime.now())
-                .price(MOVIE_PRICE)
-                .build();
-
-        SessionDto sessionDto = sessionService.create(createSessionDto);
-
-        ticketService.create(sessionDto);
-
-        TicketBookingDto ticketBookingDto = TicketBookingDto.builder()
-                .sessionId(sessionDto.getId())
-                .placeName("A3")
-                .build();
+        TicketBookingDto ticketBookingDto = createTicket(
+                expectedName,
+                expectedDescription,
+                expectedPlace,
+                dateTime
+        );
 
         ticketService.booking(ticketBookingDto);
 
@@ -116,26 +107,17 @@ public class TicketControllerTest {
     @Test
     @DisplayName("Успешное бронирование билета")
     public void bookingSuccess() {
-        CreateMovieDto createMovieDto = CreateMovieDto.builder()
-                .name("test name")
-                .description("test description")
-                .build();
-        int movieId = movieService.create(createMovieDto).getId();
+        String expectedName = "test name";
+        String expectedDescription = "test description";
+        String expectedPlace = "A3";
+        LocalDateTime dateTime = LocalDateTime.now();
 
-        CreateSessionDto createSessionDto = CreateSessionDto.builder()
-                .movieId(movieId)
-                .datetime(LocalDateTime.now())
-                .price(MOVIE_PRICE)
-                .build();
-
-        SessionDto sessionDto = sessionService.create(createSessionDto);
-
-        ticketService.create(sessionDto);
-
-        TicketBookingDto ticketBookingDto = TicketBookingDto.builder()
-                .sessionId(sessionDto.getId())
-                .placeName("A3")
-                .build();
+        TicketBookingDto ticketBookingDto = createTicket(
+                expectedName,
+                expectedDescription,
+                expectedPlace,
+                dateTime
+        );
 
         TicketBookingResDto ticketBookingResDto = given(requestSpecification)
                 .body(ticketBookingDto)
@@ -147,33 +129,24 @@ public class TicketControllerTest {
                 .as(TicketBookingResDto.class);
 
         assertEquals(ticketBookingDto.getPlaceName(), ticketBookingResDto.getPlaceName());
-        assertEquals(sessionDto.getMovie().getName(), ticketBookingResDto.getMovieName());
-        assertEquals(sessionDto.getDatetime(), ticketBookingResDto.getDate());
+        assertEquals(expectedName, ticketBookingResDto.getMovieName());
+        assertEquals(dateTime, ticketBookingResDto.getDate());
     }
 
     @Test
     @DisplayName("Ошибка при попытке забронировать купленный билет")
     public void shouldFailWhenBookingPurchasedTicket() {
-        CreateMovieDto createMovieDto = CreateMovieDto.builder()
-                .name("test name")
-                .description("test description")
-                .build();
-        int movieId = movieService.create(createMovieDto).getId();
+        String expectedName = "test name";
+        String expectedDescription = "test description";
+        String expectedPlace = "A3";
+        LocalDateTime dateTime = LocalDateTime.now();
 
-        CreateSessionDto createSessionDto = CreateSessionDto.builder()
-                .movieId(movieId)
-                .datetime(LocalDateTime.now())
-                .price(MOVIE_PRICE)
-                .build();
-
-        SessionDto sessionDto = sessionService.create(createSessionDto);
-
-        ticketService.create(sessionDto);
-
-        TicketBookingDto ticketBookingDto = TicketBookingDto.builder()
-                .sessionId(sessionDto.getId())
-                .placeName("A1")
-                .build();
+        TicketBookingDto ticketBookingDto = createTicket(
+                expectedName,
+                expectedDescription,
+                expectedPlace,
+                dateTime
+        );
 
         ticketService.booking(ticketBookingDto);
         ticketService.booking(ticketBookingDto);
@@ -200,5 +173,28 @@ public class TicketControllerTest {
                 .then()
                 .spec(responseSpecification)
                 .statusCode(NOT_FOUND.value());
+    }
+
+    private TicketBookingDto createTicket(String name, String desc, String place, LocalDateTime date) {
+        CreateMovieDto createMovieDto = CreateMovieDto.builder()
+                .name(name)
+                .description(desc)
+                .build();
+        int movieId = movieService.create(createMovieDto).getId();
+
+        CreateSessionDto createSessionDto = CreateSessionDto.builder()
+                .movieId(movieId)
+                .datetime(date)
+                .price(MOVIE_PRICE)
+                .build();
+
+        SessionDto sessionDto = sessionService.create(createSessionDto);
+
+        ticketService.create(sessionDto);
+
+        return TicketBookingDto.builder()
+                .sessionId(sessionDto.getId())
+                .placeName(place)
+                .build();
     }
 }
