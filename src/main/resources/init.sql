@@ -44,5 +44,3 @@ DROP TABLE ticket;
 
 insert into place (name) values ('A1');
 
-select *
-from ticket;

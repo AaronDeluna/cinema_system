@@ -62,12 +62,13 @@ public class SessionRepository {
         }
     }
 
-
     private Session toSession(ResultSet rs, int rowNum) {
         try {
             Session session = new Session();
             session.setId(rs.getInt("id"));
-            session.setMovie(DbUtils.getEntityById(rs.getString("movie_id"), movieRepository::findById));
+            session.setMovie(DbUtils.getEntityById(
+                    rs.getString("movie_id"), movieRepository::findById
+            ));
             session.setDatetime(rs.getTimestamp("datetime").toLocalDateTime());
             session.setPrice(rs.getBigDecimal("price"));
             return session;
@@ -75,5 +76,4 @@ public class SessionRepository {
             throw new DataMappingException(e);
         }
     }
-
 }

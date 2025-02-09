@@ -174,7 +174,7 @@ public class SessionControllerTest {
     }
 
     @Test
-    @DisplayName("Ошибка при попытке получить доступ к свободным местам для несуществующего сеанса по указанному id")
+    @DisplayName("Ошибка при попытке получить доступ к свободным местам для несуществующего id сеанса")
     public void shouldReturnErrorWhenGettingFreeSeatsForNonExistentSession() {
         given(requestSpecification)
                 .get("/10/free-place")

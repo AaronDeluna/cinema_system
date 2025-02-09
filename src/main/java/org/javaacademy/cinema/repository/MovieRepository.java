@@ -59,7 +59,6 @@ public class MovieRepository {
         }
     }
 
-
     private Movie toMove(ResultSet rs, int rowNum) {
         try {
             Movie movie = new Movie();
@@ -71,5 +70,4 @@ public class MovieRepository {
             throw new DataMappingException(e);
         }
     }
-
 }

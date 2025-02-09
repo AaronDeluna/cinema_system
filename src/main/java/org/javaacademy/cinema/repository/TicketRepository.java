@@ -94,8 +94,12 @@ public class TicketRepository {
         try {
             Ticket ticket = new Ticket();
             ticket.setId(rs.getInt("id"));
-            ticket.setSession(DbUtils.getEntityById(rs.getString("session_id"), sessionRepository::findById));
-            ticket.setPlace(DbUtils.getEntityById(rs.getString("place_id"), placeRepository::findById));
+            ticket.setSession(DbUtils.getEntityById(
+                    rs.getString("session_id"), sessionRepository::findById
+            ));
+            ticket.setPlace(DbUtils.getEntityById(
+                    rs.getString("place_id"), placeRepository::findById
+            ));
             ticket.setPaid(rs.getBoolean("paid"));
             return ticket;
         } catch (SQLException e) {
