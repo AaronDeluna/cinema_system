@@ -28,6 +28,7 @@ public class TicketService {
     private static final String BOOKING_TICKET_ERROR_MESSAGE = "Билет на сеанс с id: %s или местом: %s не найден.";
     private static final String NO_AVAILABLE_TICKETS_MESSAGE = "Не найдены доступные билеты для бронирования";
     private static final String TICKET_ALREADY_PURCHASED_MESSAGE = "Ошибка: место: '%s' уже занято";
+    private static final String PLACES_NOT_FOUND_MESSAGE = "Ошибка: места не найдены";
     private final TicketRepository ticketRepository;
     private final PlaceRepository placeRepository;
     private final SessionMapper sessionMapper;
@@ -35,7 +36,8 @@ public class TicketService {
     private final PlaceMapper placeMapper;
 
     public void create(SessionDto sessionDto) {
-        List<PlaceDto> places = placeMapper.toDtos(placeRepository.findAll().orElseThrow());
+        List<PlaceDto> places = placeMapper.toDtos(placeRepository.findAll()
+                .orElseThrow(() -> new NotFoundException(PLACES_NOT_FOUND_MESSAGE)));
         for (PlaceDto place : places) {
             ticketRepository.save(new Ticket(
                     sessionMapper.toEntity(sessionDto),

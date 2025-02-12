@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.javaacademy.cinema.entity.Ticket;
 import org.javaacademy.cinema.exception.DataMappingException;
-import org.javaacademy.cinema.util.DbUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -39,8 +38,10 @@ public class TicketRepository {
         try {
             Integer ticketId = jdbcTemplate.queryForObject(
                     SAVE_TICKET_SQL,
-                    new Object[] {ticket.getPlace().getId(), ticket.getSession().getId(), false},
-                    Integer.class
+                    Integer.class,
+                    ticket.getPlace().getId(),
+                    ticket.getSession().getId(),
+                    false
             );
             ticket.setId(ticketId);
             return Optional.of(ticket);
@@ -94,12 +95,14 @@ public class TicketRepository {
         try {
             Ticket ticket = new Ticket();
             ticket.setId(rs.getInt("id"));
-            ticket.setSession(DbUtils.getEntityById(
-                    rs.getString("session_id"), sessionRepository::findById
-            ));
-            ticket.setPlace(DbUtils.getEntityById(
-                    rs.getString("place_id"), placeRepository::findById
-            ));
+            if (rs.getString("session_id") != null) {
+                int sessionId = Integer.parseInt(rs.getString("session_id"));
+                ticket.setSession(sessionRepository.findById(sessionId).orElse(null));
+            }
+            if (rs.getString("place_id") != null) {
+                int placeId = Integer.parseInt(rs.getString("place_id"));
+                ticket.setPlace(placeRepository.findById(placeId).orElse(null));
+            }
             ticket.setPaid(rs.getBoolean("paid"));
             return ticket;
         } catch (SQLException e) {

@@ -24,23 +24,29 @@ CREATE TABLE ticket
     id         SERIAL PRIMARY KEY,
     place_id   INT REFERENCES place (id),
     session_id INT REFERENCES session (id),
-    paid BOOLEAN
+    paid       BOOLEAN
 );
 
-SELECT * from movie;
-SELECT * from session;
-SELECT * from place;
-SELECT * from ticket;
+SELECT *
+from movie;
+SELECT *
+from session;
+SELECT *
+from place;
+SELECT *
+from ticket;
 
-DELETE FROM session;
-DELETE FROM place;
-DELETE FROM ticket;
-DELETE FROM movie;
+DELETE
+FROM session;
+DELETE
+FROM place;
+DELETE
+FROM ticket;
+DELETE
+FROM movie;
 
 DROP TABLE movie;
 DROP TABLE session;
 DROP TABLE place;
 DROP TABLE ticket;
-
-insert into place (name) values ('A1');
 

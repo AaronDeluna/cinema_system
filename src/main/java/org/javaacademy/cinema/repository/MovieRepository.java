@@ -29,8 +29,9 @@ public class MovieRepository {
         try {
             Integer movieId = jdbcTemplate.queryForObject(
                     SAVE_MOVIE_SQL,
-                    new Object[] {movie.getName(), movie.getDescription()},
-                    Integer.class
+                    Integer.class,
+                    movie.getName(),
+                    movie.getDescription()
             );
             movie.setId(movieId);
             return Optional.of(movie);

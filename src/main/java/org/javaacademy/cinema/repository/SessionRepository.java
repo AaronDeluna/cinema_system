@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.javaacademy.cinema.entity.Session;
 import org.javaacademy.cinema.exception.DataMappingException;
-import org.javaacademy.cinema.util.DbUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -32,8 +31,10 @@ public class SessionRepository {
         try {
             Integer sessionId = jdbcTemplate.queryForObject(
                     SAVE_SESSION_SQL,
-                    new Object[] {session.getMovie().getId(), session.getPrice(), session.getDatetime()},
-                    Integer.class
+                    Integer.class,
+                    session.getMovie().getId(),
+                    session.getPrice(),
+                    session.getDatetime()
             );
             session.setId(sessionId);
             return Optional.of(session);
@@ -66,9 +67,10 @@ public class SessionRepository {
         try {
             Session session = new Session();
             session.setId(rs.getInt("id"));
-            session.setMovie(DbUtils.getEntityById(
-                    rs.getString("movie_id"), movieRepository::findById
-            ));
+            if (rs.getString("movie_id") != null) {
+                int movieId = Integer.parseInt(rs.getString("movie_id"));
+                session.setMovie(movieRepository.findById(movieId).orElse(null));
+            }
             session.setDatetime(rs.getTimestamp("datetime").toLocalDateTime());
             session.setPrice(rs.getBigDecimal("price"));
             return session;
