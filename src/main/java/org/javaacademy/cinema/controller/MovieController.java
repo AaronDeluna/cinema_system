@@ -58,7 +58,6 @@ public class MovieController {
     @PostMapping
     public ResponseEntity<MovieDto> create(@RequestHeader("user-token") String token,
                                            @RequestBody @Validated CreateMovieDto createMovieDto) {
-        log.info("RequestHeader пришел нам такой токен: {}", token);
         tokenService.tokenValidation(token);
         return ResponseEntity.status(HttpStatus.CREATED).body(movieService.create(createMovieDto));
     }

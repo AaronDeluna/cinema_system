@@ -29,8 +29,9 @@ public class MovieRepository {
         try {
             Integer movieId = jdbcTemplate.queryForObject(
                     SAVE_MOVIE_SQL,
-                    new Object[] {movie.getName(), movie.getDescription()},
-                    Integer.class
+                    Integer.class,
+                    movie.getName(),
+                    movie.getDescription()
             );
             movie.setId(movieId);
             return Optional.of(movie);
@@ -59,7 +60,6 @@ public class MovieRepository {
         }
     }
 
-
     private Movie toMove(ResultSet rs, int rowNum) {
         try {
             Movie movie = new Movie();
@@ -71,5 +71,4 @@ public class MovieRepository {
             throw new DataMappingException(e);
         }
     }
-
 }
