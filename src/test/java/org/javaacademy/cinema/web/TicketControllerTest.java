@@ -18,14 +18,13 @@ import org.javaacademy.cinema.dto.ticket.TicketDto;
 import org.javaacademy.cinema.service.MovieService;
 import org.javaacademy.cinema.service.SessionService;
 import org.javaacademy.cinema.service.TicketService;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -42,14 +41,9 @@ import static org.springframework.http.HttpStatus.OK;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@Sql(scripts = "/sql/clean_tables.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public class TicketControllerTest {
     private static final BigDecimal MOVIE_PRICE = valueOf(1000);
-    private static final String DELETE_TABLES_SQL = """
-            DELETE FROM ticket;
-            DELETE FROM place;
-            DELETE FROM session;
-            DELETE FROM movie;
-            """;
     private final Header header = new Header("user-token",  "secretadmin123");
     private final RequestSpecification requestSpecification = new RequestSpecBuilder()
             .setBasePath("/api/ticket")
@@ -60,20 +54,12 @@ public class TicketControllerTest {
     private final ResponseSpecification responseSpecification = new ResponseSpecBuilder()
             .log(LogDetail.ALL)
             .build();
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
     @Autowired
     private TicketService ticketService;
     @Autowired
     private MovieService movieService;
     @Autowired
     private SessionService sessionService;
-
-    @AfterEach
-    public void cleanUpDatabase() {
-        jdbcTemplate.execute(DELETE_TABLES_SQL);
-    }
 
     @Test
     @DisplayName("Успешное получение купленых билетов")

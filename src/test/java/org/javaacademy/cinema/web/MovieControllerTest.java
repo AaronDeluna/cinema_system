@@ -21,6 +21,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
@@ -34,14 +35,9 @@ import static org.springframework.http.HttpStatus.OK;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@Sql(scripts = "/sql/clean_tables.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public class MovieControllerTest {
     private static final int EXPECTED_LIST_SIZE = 3;
-    private static final String DELETE_TABLES_SQL = """
-            DELETE FROM ticket;
-            DELETE FROM place;
-            DELETE FROM session;
-            DELETE FROM movie;
-            """;
     private final Header header = new Header("user-token", "secretadmin123");
     private final RequestSpecification requestSpecification = new RequestSpecBuilder()
             .setBasePath("/api/movie")
@@ -51,16 +47,8 @@ public class MovieControllerTest {
     private final ResponseSpecification responseSpecification = new ResponseSpecBuilder()
             .log(LogDetail.ALL)
             .build();
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
     @Autowired
     private MovieService movieService;
-
-    @BeforeEach
-    public void cleanUpDatabase() {
-        jdbcTemplate.execute(DELETE_TABLES_SQL);
-    }
 
     @Test
     @DisplayName("Успешное создание фильма")
