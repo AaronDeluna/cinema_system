@@ -12,7 +12,7 @@ import org.javaacademy.cinema.dto.ticket.TicketBookingDto;
 import org.javaacademy.cinema.dto.ticket.TicketBookingResDto;
 import org.javaacademy.cinema.dto.ticket.TicketDto;
 import org.javaacademy.cinema.service.TicketService;
-import org.javaacademy.cinema.service.TokenService;
+import org.javaacademy.cinema.service.AuthorizationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,9 +27,8 @@ import java.util.List;
 @RequestMapping("/api/ticket")
 @RequiredArgsConstructor
 public class TicketController {
-    private static final boolean PAID_STATUS = true;
     private final TicketService ticketService;
-    private final TokenService tokenService;
+    private final AuthorizationService authorizationService;
 
     @Operation(
             summary = "Получить все проданные билеты"
@@ -48,8 +47,8 @@ public class TicketController {
     })
     @GetMapping("/saled")
     public ResponseEntity<List<TicketDto>> findAllByPaidStatus(@RequestHeader("user-token") String token) {
-        tokenService.tokenValidation(token);
-        return ResponseEntity.ok().body(ticketService.findAllByPaidStatus(PAID_STATUS));
+        authorizationService.tokenValidation(token);
+        return ResponseEntity.ok().body(ticketService.findAllByPaidStatus(true));
     }
 
     @Operation(

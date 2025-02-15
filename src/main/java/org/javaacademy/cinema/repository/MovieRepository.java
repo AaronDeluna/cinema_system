@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.javaacademy.cinema.entity.Movie;
 import org.javaacademy.cinema.exception.DataMappingException;
+import org.javaacademy.cinema.exception.EntitySaveException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,21 +12,24 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
 
 @Repository
 @RequiredArgsConstructor
 @Slf4j
 public class MovieRepository {
+    private static final String MOVIE_SAVE_ERROR_MESSAGE = "Не удалось сохранить фильм: %s";
     private static final String FIND_BY_ID_SQL = "select * from movie where id = ?";
     private static final String FIND_ALL_SQL = "select * from movie";
     private static final String SAVE_MOVIE_SQL = "insert into movie (name, description) values (?, ?) RETURNING id";
     private final JdbcTemplate jdbcTemplate;
 
-    public Optional<Movie> save(Movie movie) {
+    public Movie save(Movie movie) {
         try {
             Integer movieId = jdbcTemplate.queryForObject(
                     SAVE_MOVIE_SQL,
@@ -34,20 +38,18 @@ public class MovieRepository {
                     movie.getDescription()
             );
             movie.setId(movieId);
-            return Optional.of(movie);
+            return movie;
         } catch (DataAccessException e) {
-            log.warn("Произошла ошибка при сохранении: {}", e.getMessage());
-            return empty();
+            throw new EntitySaveException(MOVIE_SAVE_ERROR_MESSAGE, e);
         }
     }
 
-    public Optional<List<Movie>> findAll() {
+    public List<Movie> findAll() {
         try {
-            List<Movie> movies = jdbcTemplate.query(FIND_ALL_SQL, this::toMove);
-            return Optional.of(movies);
+            return jdbcTemplate.query(FIND_ALL_SQL, this::toMove);
         } catch (DataAccessException e) {
             log.warn("Произошла ошибка при поиске всех фильмов: {}", e.getMessage());
-            return empty();
+            return emptyList();
         }
     }
 

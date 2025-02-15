@@ -57,12 +57,10 @@ public class SessionService {
     }
 
     public List<ResponseSessionDto> findAll() {
-        return sessionMapper.toResponseDtos(sessionRepository.findAll().orElse(emptyList()));
+        return sessionMapper.toResponseDtos(sessionRepository.findAll());
     }
 
     private SessionDto saveSession(SessionDto sessionDto) {
-        return sessionMapper.toDto(sessionRepository.save(sessionMapper.toEntity(sessionDto))
-                        .orElseThrow(() -> new EntitySaveException(SESSION_SAVE_ERROR_MESSAGE))
-        );
+        return sessionMapper.toDto(sessionRepository.save(sessionMapper.toEntity(sessionDto)));
     }
 }

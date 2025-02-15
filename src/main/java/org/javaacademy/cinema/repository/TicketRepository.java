@@ -11,16 +11,17 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
 
 @Repository
 @RequiredArgsConstructor
 @Slf4j
 public class TicketRepository {
-    private static final String FIND_BY_ID_SQL = "select * from ticket where id = ?";
     private static final String SAVE_TICKET_SQL =
             "insert into ticket (place_id, session_id, paid) values (?, ?, ?) returning id";
     private static final String UPDATE_TICKET_PAID_SQL = "update ticket set paid = ? where id = ? and session_id = ?";
@@ -34,21 +35,16 @@ public class TicketRepository {
     private final SessionRepository sessionRepository;
     private final PlaceRepository placeRepository;
 
-    public Optional<Ticket> save(Ticket ticket) {
-        try {
-            Integer ticketId = jdbcTemplate.queryForObject(
-                    SAVE_TICKET_SQL,
-                    Integer.class,
-                    ticket.getPlace().getId(),
-                    ticket.getSession().getId(),
-                    false
-            );
-            ticket.setId(ticketId);
-            return Optional.of(ticket);
-        } catch (DataAccessException e) {
-            log.warn("Произошла ошибка при сохранении: {}", e.getMessage());
-            return empty();
-        }
+    public Ticket save(Ticket ticket) {
+        Integer ticketId = jdbcTemplate.queryForObject(
+                SAVE_TICKET_SQL,
+                Integer.class,
+                ticket.getPlace().getId(),
+                ticket.getSession().getId(),
+                false
+        );
+        ticket.setId(ticketId);
+        return ticket;
     }
 
     public void updatePurchaseStatusById(int id, int sessionId) {
@@ -62,32 +58,21 @@ public class TicketRepository {
         }
     }
 
-    public Optional<List<Ticket>> findAllByPaymentStatus(boolean isPaid) {
+    public List<Ticket> findAllByPaymentStatus(boolean isPaid) {
         try {
-            List<Ticket> tickets = jdbcTemplate.query(FIND_TICKET_BY_PAID_STATUS, this::toTicket, isPaid);
-            return Optional.of(tickets);
+            return jdbcTemplate.query(FIND_TICKET_BY_PAID_STATUS, this::toTicket, isPaid);
         } catch (DataAccessException e) {
             log.warn("Произошла ошибка при поиске билетов по статусу: {}", e.getMessage());
-            return empty();
+            return emptyList();
         }
     }
 
-    public Optional<List<Ticket>> findAllBySessionId(int sessionId) {
+    public List<Ticket> findAllBySessionId(int sessionId) {
         try {
-            List<Ticket> tickets = jdbcTemplate.query(FIND_ALL_TICKET_BY_SESSION_ID, this::toTicket, sessionId);
-            return Optional.of(tickets);
+            return jdbcTemplate.query(FIND_ALL_TICKET_BY_SESSION_ID, this::toTicket, sessionId);
         } catch (DataAccessException e) {
             log.warn("Произошла ошибка при поиске билета по sessionId: {}", sessionId);
-            return empty();
-        }
-    }
-
-    public Optional<Ticket> findById(int id) {
-        try {
-            return Optional.of(jdbcTemplate.queryForObject(FIND_BY_ID_SQL, this::toTicket, id));
-        } catch (EmptyResultDataAccessException e) {
-            log.warn("Произошла ошибка при поиске по id {}, {}", id, e.getMessage());
-            return empty();
+            return emptyList();
         }
     }
 

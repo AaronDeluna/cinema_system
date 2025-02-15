@@ -11,9 +11,11 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
 
 @Repository
@@ -43,13 +45,12 @@ public class PlaceRepository {
         }
     }
 
-    public Optional<List<Place>> findAll() {
+    public List<Place> findAll() {
         try {
-            List<Place> places = jdbcTemplate.query(FIND_ALL_PLACE_SQL, this::toPlace);
-            return Optional.of(places);
+            return jdbcTemplate.query(FIND_ALL_PLACE_SQL, this::toPlace);
         } catch (DataAccessException e) {
             log.warn("Произошла ошибка при получении всех мест {}", e.getMessage());
-            return empty();
+            return emptyList();
         }
     }
 

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.javaacademy.cinema.entity.Session;
 import org.javaacademy.cinema.exception.DataMappingException;
+import org.javaacademy.cinema.exception.EntitySaveException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,15 +12,18 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
 
 @Repository
 @RequiredArgsConstructor
 @Slf4j
 public class SessionRepository {
+    private static final String SESSION_SAVE_ERROR_MESSAGE = "Не удалось сохранить сессию: %s";
     private static final String FIND_BY_ID_SQL = "select * from session where id = ?";
     private static final String FIND_ALL_SQL = "select * from session";
     private static final String SAVE_SESSION_SQL =
@@ -27,7 +31,7 @@ public class SessionRepository {
     private final JdbcTemplate jdbcTemplate;
     private final MovieRepository movieRepository;
 
-    public Optional<Session> save(Session session) {
+    public Session save(Session session) {
         try {
             Integer sessionId = jdbcTemplate.queryForObject(
                     SAVE_SESSION_SQL,
@@ -37,10 +41,9 @@ public class SessionRepository {
                     session.getDatetime()
             );
             session.setId(sessionId);
-            return Optional.of(session);
+            return session;
         } catch (DataAccessException e) {
-            log.warn("Произошла ошибка при сохранении: {}", e.getMessage());
-            return empty();
+            throw new EntitySaveException(SESSION_SAVE_ERROR_MESSAGE, e);
         }
     }
 
@@ -53,13 +56,12 @@ public class SessionRepository {
         }
     }
 
-    public Optional<List<Session>> findAll() {
+    public List<Session> findAll() {
         try {
-            List<Session> sessions = jdbcTemplate.query(FIND_ALL_SQL, this::toSession);
-            return Optional.of(sessions);
+            return jdbcTemplate.query(FIND_ALL_SQL, this::toSession);
         } catch (DataAccessException e) {
             log.warn("Произошла ошибка при поиске всех сеансов: {}", e.getMessage());
-            return empty();
+            return emptyList();
         }
     }
 

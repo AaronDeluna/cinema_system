@@ -27,20 +27,4 @@ CREATE TABLE ticket
     paid BOOLEAN
 );
 
-
-select *
-from movie;
-
-select *
-from session;
-
-select *
-from ticket;
-
-select *
-from place;
-
-DELETE FROM ticket;
-DELETE FROM place;
-DELETE FROM session;
-DELETE FROM movie;
+select * from ticket;

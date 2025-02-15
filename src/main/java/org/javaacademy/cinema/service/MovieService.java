@@ -17,17 +17,15 @@ import static java.util.Collections.emptyList;
 @Service
 @RequiredArgsConstructor
 public class MovieService {
-    private static final String MOVIE_SAVE_ERROR_MESSAGE = "Не удалось сохранить фильм";
     private final MovieRepository movieRepository;
     private final MovieMapper movieMapper;
 
     public MovieDto create(CreateMovieDto createMovieDto) {
-        Movie movie = movieRepository.save(movieMapper.toEntity(createMovieDto))
-                .orElseThrow(() -> new EntitySaveException(MOVIE_SAVE_ERROR_MESSAGE));
+        Movie movie = movieRepository.save(movieMapper.toEntity(createMovieDto));
         return movieMapper.toDto(movie);
     }
 
     public List<ResponseMovieDto> findAll() {
-        return movieMapper.toDtos(movieRepository.findAll().orElse(emptyList()));
+        return movieMapper.toDtos(movieRepository.findAll());
     }
 }

@@ -27,26 +27,10 @@ CREATE TABLE ticket
     paid       BOOLEAN
 );
 
-SELECT *
-from movie;
-SELECT *
-from session;
-SELECT *
-from place;
-SELECT *
-from ticket;
+select *
+from ticket t join place p on p.id = t.place_id
+where session_id = 1 and p.name = 'A3';
 
-DELETE
-FROM session;
-DELETE
-FROM place;
-DELETE
-FROM ticket;
-DELETE
-FROM movie;
 
-DROP TABLE movie;
-DROP TABLE session;
-DROP TABLE place;
-DROP TABLE ticket;
-
+select * from ticket;
+select * from session;

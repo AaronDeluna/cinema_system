@@ -9,7 +9,7 @@ import java.util.Objects;
 
 @Slf4j
 @Service
-public class TokenService {
+public class AuthorizationService {
     public static final String INVALID_TOKEN_MESSAGE =
             "Ошибка валидации токена: предоставленный токен не совпадает с ожидаемым.";
     @Value("${cinema.admin.token}")

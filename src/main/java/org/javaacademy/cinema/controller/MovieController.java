@@ -13,7 +13,7 @@ import org.javaacademy.cinema.dto.movie.CreateMovieDto;
 import org.javaacademy.cinema.dto.movie.MovieDto;
 import org.javaacademy.cinema.dto.movie.ResponseMovieDto;
 import org.javaacademy.cinema.service.MovieService;
-import org.javaacademy.cinema.service.TokenService;
+import org.javaacademy.cinema.service.AuthorizationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -32,7 +32,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MovieController {
     private final MovieService movieService;
-    private final TokenService tokenService;
+    private final AuthorizationService authorizationService;
 
     @Operation(
             summary = "Сохранение фильма"
@@ -58,7 +58,7 @@ public class MovieController {
     @PostMapping
     public ResponseEntity<MovieDto> create(@RequestHeader("user-token") String token,
                                            @RequestBody @Validated CreateMovieDto createMovieDto) {
-        tokenService.tokenValidation(token);
+        authorizationService.tokenValidation(token);
         return ResponseEntity.status(HttpStatus.CREATED).body(movieService.create(createMovieDto));
     }
 
