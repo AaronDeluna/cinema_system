@@ -12,7 +12,7 @@ import org.javaacademy.cinema.dto.session.CreateSessionDto;
 import org.javaacademy.cinema.dto.session.ResponseSessionDto;
 import org.javaacademy.cinema.dto.session.SessionDto;
 import org.javaacademy.cinema.service.SessionService;
-import org.javaacademy.cinema.service.TokenService;
+import org.javaacademy.cinema.service.AuthorizationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -31,7 +31,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SessionController {
     private final SessionService sessionService;
-    private final TokenService tokenService;
+    private final AuthorizationService authorizationService;
 
     @Operation(
             summary = "Создание сеансов"
@@ -65,7 +65,7 @@ public class SessionController {
     @PostMapping
     public ResponseEntity<SessionDto> create(@RequestHeader("user-token") String token,
                                              @RequestBody @Validated CreateSessionDto createSessionDto) {
-        tokenService.tokenValidation(token);
+        authorizationService.tokenValidation(token);
         return ResponseEntity.status(HttpStatus.CREATED).body(sessionService.create(createSessionDto));
     }
 

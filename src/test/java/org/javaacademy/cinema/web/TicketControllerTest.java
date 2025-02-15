@@ -122,18 +122,26 @@ public class TicketControllerTest {
     @Test
     @DisplayName("Ошибка при попытке забронировать купленный билет")
     public void shouldFailWhenBookingPurchasedTicket() {
-        String expectedName = "test name";
-        String expectedDescription = "test description";
-        String expectedPlace = "A3";
-        LocalDateTime dateTime = LocalDateTime.now();
+        CreateMovieDto createMovieDto = CreateMovieDto.builder()
+                .name("test name")
+                .description("test description")
+                .build();
+        int movieId = movieService.create(createMovieDto).getId();
 
-        TicketBookingDto ticketBookingDto = createTicket(
-                expectedName,
-                expectedDescription,
-                expectedPlace,
-                dateTime
-        );
+        CreateSessionDto createSessionDto = CreateSessionDto.builder()
+                .movieId(movieId)
+                .datetime(LocalDateTime.now())
+                .price(MOVIE_PRICE)
+                .build();
 
+        SessionDto sessionDto = sessionService.create(createSessionDto);
+
+        ticketService.create(sessionDto);
+
+        TicketBookingDto ticketBookingDto = TicketBookingDto.builder()
+                .sessionId(sessionDto.getId())
+                .placeName("A3")
+                .build();
         ticketService.booking(ticketBookingDto);
         ticketService.booking(ticketBookingDto);
 

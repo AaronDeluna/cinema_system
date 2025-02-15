@@ -7,6 +7,7 @@ import org.javaacademy.cinema.dto.session.SessionDto;
 import org.javaacademy.cinema.dto.ticket.TicketBookingDto;
 import org.javaacademy.cinema.dto.ticket.TicketBookingResDto;
 import org.javaacademy.cinema.dto.ticket.TicketDto;
+import org.javaacademy.cinema.entity.Place;
 import org.javaacademy.cinema.entity.Ticket;
 import org.javaacademy.cinema.exception.NotFoundException;
 import org.javaacademy.cinema.exception.TicketAlreadyPurchasedException;
@@ -26,36 +27,26 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class TicketService {
     private static final String BOOKING_TICKET_ERROR_MESSAGE = "Билет на сеанс с id: %s или местом: %s не найден.";
-    private static final String NO_AVAILABLE_TICKETS_MESSAGE = "Не найдены доступные билеты для бронирования";
     private static final String TICKET_ALREADY_PURCHASED_MESSAGE = "Ошибка: место: '%s' уже занято";
-    private static final String PLACES_NOT_FOUND_MESSAGE = "Ошибка: места не найдены";
     private final TicketRepository ticketRepository;
     private final PlaceRepository placeRepository;
     private final SessionMapper sessionMapper;
     private final TicketMapper ticketMapper;
-    private final PlaceMapper placeMapper;
 
     public void create(SessionDto sessionDto) {
-        List<PlaceDto> places = placeMapper.toDtos(placeRepository.findAll()
-                .orElseThrow(() -> new NotFoundException(PLACES_NOT_FOUND_MESSAGE)));
-        for (PlaceDto place : places) {
-            ticketRepository.save(new Ticket(
-                    sessionMapper.toEntity(sessionDto),
-                    placeMapper.toEntity(place)
-            ));
+        List<Place> places = placeRepository.findAll();
+        for (Place place : places) {
+            ticketRepository.save(new Ticket(sessionMapper.toEntity(sessionDto), place));
         }
     }
 
     public List<TicketDto> findAllByPaidStatus(boolean isPaid) {
-        return ticketMapper.toDtos(ticketRepository.findAllByPaymentStatus(isPaid)
-                .orElse(Collections.emptyList()));
+        return ticketMapper.toDtos(ticketRepository.findAllByPaymentStatus(isPaid));
     }
 
     public TicketBookingResDto booking(TicketBookingDto bookingDto) {
         List<TicketDto> ticketsDto = ticketMapper.toDtos(
-                ticketRepository.findAllBySessionId(bookingDto.getSessionId())
-                        .orElseThrow(() -> new NotFoundException(NO_AVAILABLE_TICKETS_MESSAGE))
-        );
+                ticketRepository.findAllBySessionId(bookingDto.getSessionId()));
 
         TicketDto ticketDto = ticketsDto.stream()
                 .filter(ticket -> isMatchingTicket(ticket, bookingDto))
